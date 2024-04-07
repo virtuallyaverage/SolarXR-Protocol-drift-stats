@@ -38,6 +38,9 @@ struct BytesBuilder;
 struct StringTable;
 struct StringTableBuilder;
 
+struct driftCompData;
+struct driftCompDataBuilder;
+
 namespace hardware_info {
 
 struct HardwareAddress;
@@ -2252,6 +2255,143 @@ inline flatbuffers::Offset<StringTable> CreateStringTableDirect(
       s__);
 }
 
+/// Data packet containing data for each tracking reset.
+/// difference_deg: list of error degrees calculated on a reset (CCW(+),C(-))
+/// comp_deg: yaw degrees/s generated through drift compensation (CCW(+),C(-))
+/// delta_times: a list of time (seconds) it took for the drift to develop
+/// difference_quats: a list of the error quaternions calculated on a reset
+/// comp_quats: yaw compensation/s quaternions generated through drift compensation
+struct driftCompData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef driftCompDataBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_DRIFT_COMP_ENABLE = 4,
+    VT_DIFFERENCE_QUATS = 6,
+    VT_COMPENSATION_QUATS = 8,
+    VT_DIFFERENCE_DEG = 10,
+    VT_COMPENSATION_DEG = 12,
+    VT_RESET_INTERVAL = 14,
+    VT_MAX_RESETS = 16
+  };
+  bool drift_comp_enable() const {
+    return GetField<uint8_t>(VT_DRIFT_COMP_ENABLE, 0) != 0;
+  }
+  const flatbuffers::Vector<const solarxr_protocol::datatypes::math::Quat *> *difference_quats() const {
+    return GetPointer<const flatbuffers::Vector<const solarxr_protocol::datatypes::math::Quat *> *>(VT_DIFFERENCE_QUATS);
+  }
+  const flatbuffers::Vector<const solarxr_protocol::datatypes::math::Quat *> *compensation_quats() const {
+    return GetPointer<const flatbuffers::Vector<const solarxr_protocol::datatypes::math::Quat *> *>(VT_COMPENSATION_QUATS);
+  }
+  const flatbuffers::Vector<float> *difference_deg() const {
+    return GetPointer<const flatbuffers::Vector<float> *>(VT_DIFFERENCE_DEG);
+  }
+  const flatbuffers::Vector<float> *compensation_deg() const {
+    return GetPointer<const flatbuffers::Vector<float> *>(VT_COMPENSATION_DEG);
+  }
+  const flatbuffers::Vector<float> *reset_interval() const {
+    return GetPointer<const flatbuffers::Vector<float> *>(VT_RESET_INTERVAL);
+  }
+  uint8_t max_resets() const {
+    return GetField<uint8_t>(VT_MAX_RESETS, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint8_t>(verifier, VT_DRIFT_COMP_ENABLE, 1) &&
+           VerifyOffset(verifier, VT_DIFFERENCE_QUATS) &&
+           verifier.VerifyVector(difference_quats()) &&
+           VerifyOffset(verifier, VT_COMPENSATION_QUATS) &&
+           verifier.VerifyVector(compensation_quats()) &&
+           VerifyOffset(verifier, VT_DIFFERENCE_DEG) &&
+           verifier.VerifyVector(difference_deg()) &&
+           VerifyOffset(verifier, VT_COMPENSATION_DEG) &&
+           verifier.VerifyVector(compensation_deg()) &&
+           VerifyOffset(verifier, VT_RESET_INTERVAL) &&
+           verifier.VerifyVector(reset_interval()) &&
+           VerifyField<uint8_t>(verifier, VT_MAX_RESETS, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct driftCompDataBuilder {
+  typedef driftCompData Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_drift_comp_enable(bool drift_comp_enable) {
+    fbb_.AddElement<uint8_t>(driftCompData::VT_DRIFT_COMP_ENABLE, static_cast<uint8_t>(drift_comp_enable), 0);
+  }
+  void add_difference_quats(flatbuffers::Offset<flatbuffers::Vector<const solarxr_protocol::datatypes::math::Quat *>> difference_quats) {
+    fbb_.AddOffset(driftCompData::VT_DIFFERENCE_QUATS, difference_quats);
+  }
+  void add_compensation_quats(flatbuffers::Offset<flatbuffers::Vector<const solarxr_protocol::datatypes::math::Quat *>> compensation_quats) {
+    fbb_.AddOffset(driftCompData::VT_COMPENSATION_QUATS, compensation_quats);
+  }
+  void add_difference_deg(flatbuffers::Offset<flatbuffers::Vector<float>> difference_deg) {
+    fbb_.AddOffset(driftCompData::VT_DIFFERENCE_DEG, difference_deg);
+  }
+  void add_compensation_deg(flatbuffers::Offset<flatbuffers::Vector<float>> compensation_deg) {
+    fbb_.AddOffset(driftCompData::VT_COMPENSATION_DEG, compensation_deg);
+  }
+  void add_reset_interval(flatbuffers::Offset<flatbuffers::Vector<float>> reset_interval) {
+    fbb_.AddOffset(driftCompData::VT_RESET_INTERVAL, reset_interval);
+  }
+  void add_max_resets(uint8_t max_resets) {
+    fbb_.AddElement<uint8_t>(driftCompData::VT_MAX_RESETS, max_resets, 0);
+  }
+  explicit driftCompDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<driftCompData> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<driftCompData>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<driftCompData> CreatedriftCompData(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    bool drift_comp_enable = false,
+    flatbuffers::Offset<flatbuffers::Vector<const solarxr_protocol::datatypes::math::Quat *>> difference_quats = 0,
+    flatbuffers::Offset<flatbuffers::Vector<const solarxr_protocol::datatypes::math::Quat *>> compensation_quats = 0,
+    flatbuffers::Offset<flatbuffers::Vector<float>> difference_deg = 0,
+    flatbuffers::Offset<flatbuffers::Vector<float>> compensation_deg = 0,
+    flatbuffers::Offset<flatbuffers::Vector<float>> reset_interval = 0,
+    uint8_t max_resets = 0) {
+  driftCompDataBuilder builder_(_fbb);
+  builder_.add_reset_interval(reset_interval);
+  builder_.add_compensation_deg(compensation_deg);
+  builder_.add_difference_deg(difference_deg);
+  builder_.add_compensation_quats(compensation_quats);
+  builder_.add_difference_quats(difference_quats);
+  builder_.add_max_resets(max_resets);
+  builder_.add_drift_comp_enable(drift_comp_enable);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<driftCompData> CreatedriftCompDataDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    bool drift_comp_enable = false,
+    const std::vector<solarxr_protocol::datatypes::math::Quat> *difference_quats = nullptr,
+    const std::vector<solarxr_protocol::datatypes::math::Quat> *compensation_quats = nullptr,
+    const std::vector<float> *difference_deg = nullptr,
+    const std::vector<float> *compensation_deg = nullptr,
+    const std::vector<float> *reset_interval = nullptr,
+    uint8_t max_resets = 0) {
+  auto difference_quats__ = difference_quats ? _fbb.CreateVectorOfStructs<solarxr_protocol::datatypes::math::Quat>(*difference_quats) : 0;
+  auto compensation_quats__ = compensation_quats ? _fbb.CreateVectorOfStructs<solarxr_protocol::datatypes::math::Quat>(*compensation_quats) : 0;
+  auto difference_deg__ = difference_deg ? _fbb.CreateVector<float>(*difference_deg) : 0;
+  auto compensation_deg__ = compensation_deg ? _fbb.CreateVector<float>(*compensation_deg) : 0;
+  auto reset_interval__ = reset_interval ? _fbb.CreateVector<float>(*reset_interval) : 0;
+  return solarxr_protocol::datatypes::CreatedriftCompData(
+      _fbb,
+      drift_comp_enable,
+      difference_quats__,
+      compensation_quats__,
+      difference_deg__,
+      compensation_deg__,
+      reset_interval__,
+      max_resets);
+}
+
 namespace hardware_info {
 
 /// Mostly static info about the device's hardware/firmware.
@@ -2678,7 +2818,8 @@ struct TrackerData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_LINEAR_ACCELERATION = 20,
     VT_ROTATION_REFERENCE_ADJUSTED = 22,
     VT_ROTATION_IDENTITY_ADJUSTED = 24,
-    VT_TPS = 26
+    VT_TPS = 26,
+    VT_DRIFT_COMP_DATA = 28
   };
   const solarxr_protocol::datatypes::TrackerId *tracker_id() const {
     return GetPointer<const solarxr_protocol::datatypes::TrackerId *>(VT_TRACKER_ID);
@@ -2735,6 +2876,10 @@ struct TrackerData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   flatbuffers::Optional<uint16_t> tps() const {
     return GetOptional<uint16_t, uint16_t>(VT_TPS);
   }
+  /// A wrapper for a few drift compensation variables
+  const solarxr_protocol::datatypes::driftCompData *drift_comp_data() const {
+    return GetPointer<const solarxr_protocol::datatypes::driftCompData *>(VT_DRIFT_COMP_DATA);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_TRACKER_ID) &&
@@ -2751,6 +2896,8 @@ struct TrackerData FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<solarxr_protocol::datatypes::math::Quat>(verifier, VT_ROTATION_REFERENCE_ADJUSTED, 4) &&
            VerifyField<solarxr_protocol::datatypes::math::Quat>(verifier, VT_ROTATION_IDENTITY_ADJUSTED, 4) &&
            VerifyField<uint16_t>(verifier, VT_TPS, 2) &&
+           VerifyOffset(verifier, VT_DRIFT_COMP_DATA) &&
+           verifier.VerifyTable(drift_comp_data()) &&
            verifier.EndTable();
   }
 };
@@ -2795,6 +2942,9 @@ struct TrackerDataBuilder {
   void add_tps(uint16_t tps) {
     fbb_.AddElement<uint16_t>(TrackerData::VT_TPS, tps);
   }
+  void add_drift_comp_data(flatbuffers::Offset<solarxr_protocol::datatypes::driftCompData> drift_comp_data) {
+    fbb_.AddOffset(TrackerData::VT_DRIFT_COMP_DATA, drift_comp_data);
+  }
   explicit TrackerDataBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -2819,8 +2969,10 @@ inline flatbuffers::Offset<TrackerData> CreateTrackerData(
     const solarxr_protocol::datatypes::math::Vec3f *linear_acceleration = nullptr,
     const solarxr_protocol::datatypes::math::Quat *rotation_reference_adjusted = nullptr,
     const solarxr_protocol::datatypes::math::Quat *rotation_identity_adjusted = nullptr,
-    flatbuffers::Optional<uint16_t> tps = flatbuffers::nullopt) {
+    flatbuffers::Optional<uint16_t> tps = flatbuffers::nullopt,
+    flatbuffers::Offset<solarxr_protocol::datatypes::driftCompData> drift_comp_data = 0) {
   TrackerDataBuilder builder_(_fbb);
+  builder_.add_drift_comp_data(drift_comp_data);
   builder_.add_rotation_identity_adjusted(rotation_identity_adjusted);
   builder_.add_rotation_reference_adjusted(rotation_reference_adjusted);
   builder_.add_linear_acceleration(linear_acceleration);
@@ -2850,7 +3002,8 @@ struct TrackerDataMask FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_LINEAR_ACCELERATION = 18,
     VT_ROTATION_REFERENCE_ADJUSTED = 20,
     VT_ROTATION_IDENTITY_ADJUSTED = 22,
-    VT_TPS = 24
+    VT_TPS = 24,
+    VT_DRIFT_COMP_DATA = 26
   };
   bool info() const {
     return GetField<uint8_t>(VT_INFO, 0) != 0;
@@ -2885,6 +3038,9 @@ struct TrackerDataMask FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool tps() const {
     return GetField<uint8_t>(VT_TPS, 0) != 0;
   }
+  bool drift_comp_data() const {
+    return GetField<uint8_t>(VT_DRIFT_COMP_DATA, 0) != 0;
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint8_t>(verifier, VT_INFO, 1) &&
@@ -2898,6 +3054,7 @@ struct TrackerDataMask FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<uint8_t>(verifier, VT_ROTATION_REFERENCE_ADJUSTED, 1) &&
            VerifyField<uint8_t>(verifier, VT_ROTATION_IDENTITY_ADJUSTED, 1) &&
            VerifyField<uint8_t>(verifier, VT_TPS, 1) &&
+           VerifyField<uint8_t>(verifier, VT_DRIFT_COMP_DATA, 1) &&
            verifier.EndTable();
   }
 };
@@ -2939,6 +3096,9 @@ struct TrackerDataMaskBuilder {
   void add_tps(bool tps) {
     fbb_.AddElement<uint8_t>(TrackerDataMask::VT_TPS, static_cast<uint8_t>(tps), 0);
   }
+  void add_drift_comp_data(bool drift_comp_data) {
+    fbb_.AddElement<uint8_t>(TrackerDataMask::VT_DRIFT_COMP_DATA, static_cast<uint8_t>(drift_comp_data), 0);
+  }
   explicit TrackerDataMaskBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -2962,8 +3122,10 @@ inline flatbuffers::Offset<TrackerDataMask> CreateTrackerDataMask(
     bool linear_acceleration = false,
     bool rotation_reference_adjusted = false,
     bool rotation_identity_adjusted = false,
-    bool tps = false) {
+    bool tps = false,
+    bool drift_comp_data = false) {
   TrackerDataMaskBuilder builder_(_fbb);
+  builder_.add_drift_comp_data(drift_comp_data);
   builder_.add_tps(tps);
   builder_.add_rotation_identity_adjusted(rotation_identity_adjusted);
   builder_.add_rotation_reference_adjusted(rotation_reference_adjusted);

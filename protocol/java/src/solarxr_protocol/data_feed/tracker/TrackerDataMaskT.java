@@ -19,6 +19,7 @@ public class TrackerDataMaskT {
   private boolean rotationReferenceAdjusted;
   private boolean rotationIdentityAdjusted;
   private boolean tps;
+  private boolean driftCompData;
 
   public boolean getInfo() { return info; }
 
@@ -64,6 +65,10 @@ public class TrackerDataMaskT {
 
   public void setTps(boolean tps) { this.tps = tps; }
 
+  public boolean getDriftCompData() { return driftCompData; }
+
+  public void setDriftCompData(boolean driftCompData) { this.driftCompData = driftCompData; }
+
 
   public TrackerDataMaskT() {
     this.info = false;
@@ -77,6 +82,7 @@ public class TrackerDataMaskT {
     this.rotationReferenceAdjusted = false;
     this.rotationIdentityAdjusted = false;
     this.tps = false;
+    this.driftCompData = false;
   }
 }
 

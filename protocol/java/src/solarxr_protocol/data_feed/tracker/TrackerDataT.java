@@ -20,6 +20,7 @@ public class TrackerDataT {
   private solarxr_protocol.datatypes.math.QuatT rotationReferenceAdjusted;
   private solarxr_protocol.datatypes.math.QuatT rotationIdentityAdjusted;
   private Integer tps;
+  private solarxr_protocol.datatypes.driftCompDataT driftCompData;
 
   public solarxr_protocol.datatypes.TrackerIdT getTrackerId() { return trackerId; }
 
@@ -69,6 +70,10 @@ public class TrackerDataT {
 
   public void setTps(Integer tps) { this.tps = tps; }
 
+  public solarxr_protocol.datatypes.driftCompDataT getDriftCompData() { return driftCompData; }
+
+  public void setDriftCompData(solarxr_protocol.datatypes.driftCompDataT driftCompData) { this.driftCompData = driftCompData; }
+
 
   public TrackerDataT() {
     this.trackerId = null;
@@ -83,6 +88,7 @@ public class TrackerDataT {
     this.rotationReferenceAdjusted = new solarxr_protocol.datatypes.math.QuatT();
     this.rotationIdentityAdjusted = new solarxr_protocol.datatypes.math.QuatT();
     this.tps = null;
+    this.driftCompData = null;
   }
 }
 

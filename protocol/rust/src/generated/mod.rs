@@ -87,6 +87,8 @@ pub mod solarxr_protocol {
     pub use self::bytes_generated::*;
     mod string_table_generated;
     pub use self::string_table_generated::*;
+    mod drift_comp_data_generated;
+    pub use self::drift_comp_data_generated::*;
   } // datatypes
   pub mod pub_sub {
     use super::*;

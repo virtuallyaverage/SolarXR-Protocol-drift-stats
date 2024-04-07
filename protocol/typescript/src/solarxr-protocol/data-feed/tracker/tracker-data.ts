@@ -6,6 +6,7 @@ import { TrackerInfo, TrackerInfoT } from '../../../solarxr-protocol/data-feed/t
 import { Temperature, TemperatureT } from '../../../solarxr-protocol/datatypes/temperature.js';
 import { TrackerId, TrackerIdT } from '../../../solarxr-protocol/datatypes/tracker-id.js';
 import { TrackerStatus } from '../../../solarxr-protocol/datatypes/tracker-status.js';
+import { driftCompData, driftCompDataT } from '../../../solarxr-protocol/datatypes/drift-comp-data.js';
 import { Quat, QuatT } from '../../../solarxr-protocol/datatypes/math/quat.js';
 import { Vec3f, Vec3fT } from '../../../solarxr-protocol/datatypes/math/vec3f.js';
 
@@ -132,8 +133,16 @@ tps():number|null {
   return offset ? this.bb!.readUint16(this.bb_pos + offset) : null;
 }
 
+/**
+ * A wrapper for a few drift compensation variables
+ */
+driftCompData(obj?:driftCompData):driftCompData|null {
+  const offset = this.bb!.__offset(this.bb_pos, 28);
+  return offset ? (obj || new driftCompData()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+}
+
 static startTrackerData(builder:flatbuffers.Builder) {
-  builder.startObject(12);
+  builder.startObject(13);
 }
 
 static addTrackerId(builder:flatbuffers.Builder, trackerIdOffset:flatbuffers.Offset) {
@@ -184,6 +193,10 @@ static addTps(builder:flatbuffers.Builder, tps:number) {
   builder.addFieldInt16(11, tps, 0);
 }
 
+static addDriftCompData(builder:flatbuffers.Builder, driftCompDataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(12, driftCompDataOffset, 0);
+}
+
 static endTrackerData(builder:flatbuffers.Builder):flatbuffers.Offset {
   const offset = builder.endObject();
   return offset;
@@ -203,7 +216,8 @@ unpack(): TrackerDataT {
     (this.linearAcceleration() !== null ? this.linearAcceleration()!.unpack() : null),
     (this.rotationReferenceAdjusted() !== null ? this.rotationReferenceAdjusted()!.unpack() : null),
     (this.rotationIdentityAdjusted() !== null ? this.rotationIdentityAdjusted()!.unpack() : null),
-    this.tps()
+    this.tps(),
+    (this.driftCompData() !== null ? this.driftCompData()!.unpack() : null)
   );
 }
 
@@ -221,6 +235,7 @@ unpackTo(_o: TrackerDataT): void {
   _o.rotationReferenceAdjusted = (this.rotationReferenceAdjusted() !== null ? this.rotationReferenceAdjusted()!.unpack() : null);
   _o.rotationIdentityAdjusted = (this.rotationIdentityAdjusted() !== null ? this.rotationIdentityAdjusted()!.unpack() : null);
   _o.tps = this.tps();
+  _o.driftCompData = (this.driftCompData() !== null ? this.driftCompData()!.unpack() : null);
 }
 }
 
@@ -237,13 +252,15 @@ constructor(
   public linearAcceleration: Vec3fT|null = null,
   public rotationReferenceAdjusted: QuatT|null = null,
   public rotationIdentityAdjusted: QuatT|null = null,
-  public tps: number|null = null
+  public tps: number|null = null,
+  public driftCompData: driftCompDataT|null = null
 ){}
 
 
 pack(builder:flatbuffers.Builder): flatbuffers.Offset {
   const trackerId = (this.trackerId !== null ? this.trackerId!.pack(builder) : 0);
   const info = (this.info !== null ? this.info!.pack(builder) : 0);
+  const driftCompData = (this.driftCompData !== null ? this.driftCompData!.pack(builder) : 0);
 
   TrackerData.startTrackerData(builder);
   TrackerData.addTrackerId(builder, trackerId);
@@ -259,6 +276,7 @@ pack(builder:flatbuffers.Builder): flatbuffers.Offset {
   TrackerData.addRotationIdentityAdjusted(builder, (this.rotationIdentityAdjusted !== null ? this.rotationIdentityAdjusted!.pack(builder) : 0));
   if (this.tps !== null)
     TrackerData.addTps(builder, this.tps);
+  TrackerData.addDriftCompData(builder, driftCompData);
 
   return TrackerData.endTrackerData(builder);
 }

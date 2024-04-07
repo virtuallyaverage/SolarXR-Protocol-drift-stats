@@ -1,3 +1,4 @@
+
 namespace solarxr_protocol.datatypes;
 
 // /// Trivially wraps a string, for use in a union
@@ -148,30 +149,19 @@ table StringTable {
 }
 
 /// Data packet containing data for each tracking reset.
-/// difference_quats: a list of the error quaternions calculated on a reset
-/// comp_quats: yaw compensation/s quaternions generated through drift compensation
-/// delta_times: a list of time (seconds) it took for the drift to develop
-table driftTable {
-    difference_quats: [solarxr_protocol.datatypes.math.Quat];
-    compensation_quats: [solarxr_protocol.datatypes.math.Quat];
-
-}
-
-/// Data packet containing data for each tracking reset.
 /// difference_deg: list of error degrees calculated on a reset (CCW(+),C(-))
 /// comp_deg: yaw degrees/s generated through drift compensation (CCW(+),C(-))
 /// delta_times: a list of time (seconds) it took for the drift to develop
-table driftTableDeg {
-    difference_deg: [float32];
-    compensation_deg: [float32];
-
-}
+/// difference_quats: a list of the error quaternions calculated on a reset
+/// comp_quats: yaw compensation/s quaternions generated through drift compensation
 
 //wrap drift compensation data
 table driftCompData {
     drift_comp_enable: bool;
-    drifts_table: solarxr_protocol.datatypes.driftTable;
-    drifts_table_deg: solarxr_protocol.datatypes.driftTableDeg;
+    difference_quats: [solarxr_protocol.datatypes.math.Quat];
+    compensation_quats: [solarxr_protocol.datatypes.math.Quat];
+    difference_deg: [float32];
+    compensation_deg: [float32];
     reset_interval: [float32];
     max_resets: uint8;
 
